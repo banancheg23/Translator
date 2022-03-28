@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#212121</color>
+    <color name="colorPrimaryDark">#1c1c1c</color>
+    <color name="colorAccent">#BB86FC</color>
+    <color name="color_error">#bf1e19</color>
+    <color name="color_text_main">#CDCDCD</color>
+    <color name="color_delete_text_icon">#66000014</color>
+    <color name="color_text_header">#C697FF</color>
+    <color name="color_black">#313131</color>
+    <color name="color_white">#FFFFFF</color>
+    <color name="color_gray">#66000000</color>
+    <color name="color_window_background">#535353</color>
+</resources>
