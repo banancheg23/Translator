@@ -1,0 +1,57 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet_dialog_layout"
+    android:layout_width="match_parent"
+    android:layout_height="205dp"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:layout_marginBottom="@dimen/margin_medium">
+
+    <TextView
+        android:id="@+id/search_button_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextViewButtonStyle"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:text="@string/button_search"
+        android:layout_gravity="end" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginBottom="@dimen/margin_xxx_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:layout_marginStart="@dimen/margin_medium">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/search_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_hint"
+            app:boxBackgroundColor="@android:color/transparent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/search_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/BaseEditTextStyle"
+                android:imeOptions="actionDone"
+                android:textSize="@dimen/text_size_large"
+                android:inputType="text"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:id="@+id/clear_text_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginTop="@dimen/margin_small"
+            android:src="@drawable/ic_delete_text"
+            android:visibility="gone"
+            android:contentDescription="@string/delete_description"/>
+    </FrameLayout>
+</LinearLayout>
