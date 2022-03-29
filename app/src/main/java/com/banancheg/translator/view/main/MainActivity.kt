@@ -59,7 +59,7 @@ class MainActivity : BaseActivity<AppState>() {
                     binding.mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
                     binding.mainActivityRecyclerview.adapter = MainAdapter(onListItemClickListener, dataModel)
                 } else {
-                    adapter!!.setData(dataModel)
+                    adapter?.setData(dataModel)
                 }
             }
 
