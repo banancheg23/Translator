@@ -15,6 +15,13 @@ import com.banancheg.translator.view.base.View
 
 class MainActivity : BaseActivity<AppState>() {
 
+    companion object {
+        private val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "42"
+    }
+    override lateinit var viewModel: MainViewModel
+
+    private val observer = Observer<AppState> { renderData(it) }
+
     private lateinit var binding: ActivityMainBinding
 
     private var adapter: MainAdapter? = null
@@ -34,15 +41,11 @@ class MainActivity : BaseActivity<AppState>() {
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
                 override fun onClick(searchWord: String) {
-                    presenter.getData(searchWord, true)
+                    viewModel.getData(searchWord, true).observe(this@MainActivity, observer)
                 }
             })
-            searchDialogFragment.show(supportFragmentManager, "42")
+            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
-    }
-
-    override fun createPresenter(): Presenter<AppState, View> {
-        return MainPresenterImpl()
     }
 
     override fun renderData(appState: AppState) {
@@ -85,7 +88,7 @@ class MainActivity : BaseActivity<AppState>() {
         showViewError()
         binding.errorTextview.text = error ?: getString(R.string.undefined_error)
         binding.reloadButton.setOnClickListener {
-            presenter.getData("hi", true)
+            viewModel.getData("hi", true).observe(this, observer)
         }
     }
 

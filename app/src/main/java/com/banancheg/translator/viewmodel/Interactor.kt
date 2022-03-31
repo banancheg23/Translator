@@ -1,4 +1,4 @@
-package com.banancheg.translator.presenter
+package com.banancheg.translator.viewmodel
 
 import io.reactivex.Observable
 
