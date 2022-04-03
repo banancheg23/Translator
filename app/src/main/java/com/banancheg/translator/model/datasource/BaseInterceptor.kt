@@ -29,13 +29,4 @@ class BaseInterceptor : Interceptor {
         responseCode = response.code
         return response
     }
-
-    fun getResponseCode() = when (responseCode / 100) {
-        1 -> ServerResponseStatusCode.INFO
-        2 -> ServerResponseStatusCode.SUCCESS
-        3 -> ServerResponseStatusCode.REDIRECTION
-        4 -> ServerResponseStatusCode.CLIENT_ERROR
-        5 -> ServerResponseStatusCode.SERVER_ERROR
-        else -> ServerResponseStatusCode.UNDEFINED_ERROR
-    }
 }

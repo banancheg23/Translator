@@ -7,6 +7,12 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    @GET("words/search")
-    fun search(@Query("search") word: String): Observable<List<DataModel>>
+    companion object {
+        private const val REQUEST_SEARCH = "words/search"
+
+        private const val QUERY_SEARCH = "search"
+    }
+
+    @GET(REQUEST_SEARCH)
+    fun search(@Query(QUERY_SEARCH) word: String): Observable<List<DataModel>>
 }

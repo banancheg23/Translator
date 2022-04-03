@@ -4,16 +4,29 @@ import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banancheg.translator.R
 import com.banancheg.translator.databinding.ActivityMainBinding
 import com.banancheg.translator.model.data.AppState
 import com.banancheg.translator.model.data.DataModel
-import com.banancheg.translator.presenter.Presenter
 import com.banancheg.translator.view.base.BaseActivity
-import com.banancheg.translator.view.base.View
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
 class MainActivity : BaseActivity<AppState>() {
+
+    companion object {
+        private val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "42"
+    }
+
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    override lateinit var viewModel: MainViewModel
+
+    private val observer = Observer<AppState> { renderData(it) }
 
     private lateinit var binding: ActivityMainBinding
 
@@ -25,24 +38,26 @@ class MainActivity : BaseActivity<AppState>() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        viewModel = viewModelFactory.create(MainViewModel::class.java)
+        viewModel.subscribe().observe(this) {
+            renderData(it)
+        }
 
         binding.searchFab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
                 override fun onClick(searchWord: String) {
-                    presenter.getData(searchWord, true)
+                    viewModel.getData(searchWord, true).observe(this@MainActivity, observer)
                 }
             })
-            searchDialogFragment.show(supportFragmentManager, "42")
+            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
-    }
-
-    override fun createPresenter(): Presenter<AppState, View> {
-        return MainPresenterImpl()
     }
 
     override fun renderData(appState: AppState) {
@@ -59,7 +74,7 @@ class MainActivity : BaseActivity<AppState>() {
                     binding.mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
                     binding.mainActivityRecyclerview.adapter = MainAdapter(onListItemClickListener, dataModel)
                 } else {
-                    adapter!!.setData(dataModel)
+                    adapter?.setData(dataModel)
                 }
             }
 
@@ -85,7 +100,7 @@ class MainActivity : BaseActivity<AppState>() {
         showViewError()
         binding.errorTextview.text = error ?: getString(R.string.undefined_error)
         binding.reloadButton.setOnClickListener {
-            presenter.getData("hi", true)
+            viewModel.getData("hi", true).observe(this, observer)
         }
     }
 

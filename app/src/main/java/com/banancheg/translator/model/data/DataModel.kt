@@ -3,6 +3,11 @@ package com.banancheg.translator.model.data
 import com.google.gson.annotations.SerializedName
 
 class DataModel(
-    @field:SerializedName("text") val text: String?,
-    @field:SerializedName("meanings") val meanings: List<Meanings>?
-)
+    @SerializedName(FIELD_TEXT) val text: String?,
+    @SerializedName(FIELD_MEANINGS) val meanings: List<Meanings>?
+) {
+    companion object {
+        private const val FIELD_TEXT = "text"
+        private const val FIELD_MEANINGS = "meanings"
+    }
+}
