@@ -1,6 +1,7 @@
 package com.banancheg.translator.view.main
 
 import android.os.Bundle
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
@@ -12,8 +13,8 @@ import com.banancheg.translator.databinding.ActivityMainBinding
 import com.banancheg.translator.model.data.AppState
 import com.banancheg.translator.model.data.DataModel
 import com.banancheg.translator.view.base.BaseActivity
-import dagger.android.AndroidInjection
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.getViewModel
+import java.lang.IllegalStateException
 
 class MainActivity : BaseActivity<AppState>() {
 
@@ -21,43 +22,51 @@ class MainActivity : BaseActivity<AppState>() {
         private val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "42"
     }
 
-    @Inject
-    internal lateinit var viewModelFactory: ViewModelProvider.Factory
-
     override lateinit var viewModel: MainViewModel
-
-    private val observer = Observer<AppState> { renderData(it) }
-
     private lateinit var binding: ActivityMainBinding
+    private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) }
 
-    private var adapter: MainAdapter? = null
     private val onListItemClickListener = object : MainAdapter.OnListItemClickListener {
         override fun onItemClick(data: DataModel) {
             Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
         }
     }
 
+    private val fabClickListener = View.OnClickListener {
+        val searchDialogFragment = SearchDialogFragment.newInstance()
+        searchDialogFragment.setOnSearchClickListener(onSearchClickListener)
+        searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
+    }
+
+    private val onSearchClickListener: SearchDialogFragment.OnSearchClickListener = object : SearchDialogFragment.OnSearchClickListener {
+        override fun onClick(searchWord: String) {
+            viewModel.getData(searchWord, true)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        initViewModel()
+        initViews()
+    }
 
-        viewModel = viewModelFactory.create(MainViewModel::class.java)
+    private fun initViewModel() {
+        if (binding.mainActivityRecyclerview.adapter != null) {
+            throw IllegalStateException("ViewModel must be initialised first")
+        }
+
+        viewModel = getViewModel<MainViewModel>()
         viewModel.subscribe().observe(this) {
             renderData(it)
         }
+    }
 
-        binding.searchFab.setOnClickListener {
-            val searchDialogFragment = SearchDialogFragment.newInstance()
-            searchDialogFragment.setOnSearchClickListener(object :
-                SearchDialogFragment.OnSearchClickListener {
-                override fun onClick(searchWord: String) {
-                    viewModel.getData(searchWord, true).observe(this@MainActivity, observer)
-                }
-            })
-            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
-        }
+    private fun initViews() {
+        binding.searchFab.setOnClickListener(fabClickListener)
+        binding.mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
+        binding.mainActivityRecyclerview.adapter = adapter
     }
 
     override fun renderData(appState: AppState) {
@@ -70,12 +79,7 @@ class MainActivity : BaseActivity<AppState>() {
                 }
 
                 showViewSuccess()
-                if (adapter == null) {
-                    binding.mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
-                    binding.mainActivityRecyclerview.adapter = MainAdapter(onListItemClickListener, dataModel)
-                } else {
-                    adapter?.setData(dataModel)
-                }
+                adapter?.setData(dataModel)
             }
 
             is AppState.Loading -> {
@@ -100,7 +104,7 @@ class MainActivity : BaseActivity<AppState>() {
         showViewError()
         binding.errorTextview.text = error ?: getString(R.string.undefined_error)
         binding.reloadButton.setOnClickListener {
-            viewModel.getData("hi", true).observe(this, observer)
+            viewModel.getData("hi", true)
         }
     }
 
