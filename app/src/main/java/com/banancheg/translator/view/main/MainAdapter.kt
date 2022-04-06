@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banancheg.translator.R
 import com.banancheg.translator.model.data.DataModel
 
-class MainAdapter(
-    private var onListItemClickListener: OnListItemClickListener,
-    private var data: List<DataModel>
-) : RecyclerView.Adapter<MainAdapter.RecyclerItemViewHolder>() {
+class MainAdapter(private var onListItemClickListener: OnListItemClickListener) :
+    RecyclerView.Adapter<MainAdapter.RecyclerItemViewHolder>() {
+
+    private var data: List<DataModel> = arrayListOf()
 
     fun setData(data: List<DataModel>) {
         this.data = data

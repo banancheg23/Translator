@@ -2,6 +2,7 @@ package com.banancheg.translator.model.datasource
 
 import com.banancheg.translator.model.data.DataModel
 import io.reactivex.Observable
+import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -14,5 +15,5 @@ interface ApiService {
     }
 
     @GET(REQUEST_SEARCH)
-    fun search(@Query(QUERY_SEARCH) word: String): Observable<List<DataModel>>
+    fun searchAsync(@Query(QUERY_SEARCH) word: String): Deferred<List<DataModel>>
 }
