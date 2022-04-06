@@ -13,15 +13,18 @@ abstract class BaseViewModel<T: AppState>(
         handleError(throwable)
     }
 
-    protected val viewModelCoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob() + coroutineExceptionHandler)
+    protected val viewModelCoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob() + coroutineExceptionHandler)
+    protected var job: Job? = null
 
     override fun onCleared() {
         super.onCleared()
         cancelJob()
+        viewModelCoroutineScope.cancel()
     }
 
     protected fun cancelJob() {
-        viewModelCoroutineScope.coroutineContext.cancelChildren()
+        job?.cancel()
+        job = null
     }
 
     abstract fun handleError(error: Throwable)

@@ -20,8 +20,7 @@ val application = module {
 }
 
 val mainScreen = module {
-    factory { MainInteractor(remoteRepository = get(named(NAME_REMOTE)), localRepository = get(named(NAME_LOCAL))
-    ) }
+    factory { MainInteractor(remoteRepository = get(named(NAME_REMOTE)), localRepository = get(named(NAME_LOCAL))) }
 
     factory { MainViewModel(interactor = get()) }
 }
