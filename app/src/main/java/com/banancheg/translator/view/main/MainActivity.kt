@@ -72,13 +72,13 @@ class MainActivity : BaseActivity<AppState>() {
     override fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
+                showViewWorking()
                 val dataModel = appState.data
-                if (dataModel == null || dataModel.isEmpty()) {
-                    showErrorScreen(getString(R.string.empty_server_response_on_success))
+                if (dataModel.isNullOrEmpty()) {
+                    showAlertDialog(getString(R.string.error_stub), getString(R.string.empty_server_response_on_success))
                     return
                 }
 
-                showViewSuccess()
                 adapter?.setData(dataModel)
             }
 
@@ -95,34 +95,18 @@ class MainActivity : BaseActivity<AppState>() {
             }
 
             is AppState.Error -> {
-                showErrorScreen(appState.error.message)
+                showViewWorking()
+                showAlertDialog(getString(R.string.error_stub), appState.error.message)
             }
         }
     }
 
-    private fun showErrorScreen(error: String?) {
-        showViewError()
-        binding.errorTextview.text = error ?: getString(R.string.undefined_error)
-        binding.reloadButton.setOnClickListener {
-            viewModel.getData("hi", true)
-        }
-    }
-
-    private fun showViewSuccess() {
-        binding.successLinearLayout.visibility = VISIBLE
+    private fun showViewWorking() {
         binding.loadingFrameLayout.visibility = GONE
-        binding.errorLinearLayout.visibility = GONE
+
     }
 
     private fun showViewLoading() {
-        binding.successLinearLayout.visibility = GONE
         binding.loadingFrameLayout.visibility = VISIBLE
-        binding.errorLinearLayout.visibility = GONE
-    }
-
-    private fun showViewError() {
-        binding.successLinearLayout.visibility = GONE
-        binding.loadingFrameLayout.visibility = GONE
-        binding.errorLinearLayout.visibility = VISIBLE
     }
 }

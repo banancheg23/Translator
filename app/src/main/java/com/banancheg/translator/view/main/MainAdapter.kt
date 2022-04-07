@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.banancheg.translator.R
 import com.banancheg.translator.model.data.DataModel
+import com.banancheg.translator.utils.convertMeaningsToString
 
 class MainAdapter(private var onListItemClickListener: OnListItemClickListener) :
     RecyclerView.Adapter<MainAdapter.RecyclerItemViewHolder>() {
@@ -37,7 +38,7 @@ class MainAdapter(private var onListItemClickListener: OnListItemClickListener) 
         fun bind(data: DataModel) {
             if (layoutPosition != RecyclerView.NO_POSITION) {
                 itemView.findViewById<TextView>(R.id.header_textview_recycle_item).text = data.text
-                itemView.findViewById<TextView>(R.id.description_textview_recycle_item).text = data.meanings?.get(0)?.translation?.translation
+                itemView.findViewById<TextView>(R.id.description_textview_recycle_item).text =  convertMeaningsToString(data.meanings)
                 itemView.setOnClickListener { openInNewWindow(data) }
 
             }
