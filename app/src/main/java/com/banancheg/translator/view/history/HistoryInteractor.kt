@@ -20,4 +20,8 @@ class HistoryInteractor(
             }.getData(word)
         )
     }
+
+    override suspend fun getAllHistory(): AppState {
+        return AppState.Success(repositoryLocal.getAllHistory())
+    }
 }

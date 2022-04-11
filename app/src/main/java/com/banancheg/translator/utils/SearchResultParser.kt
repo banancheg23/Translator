@@ -4,6 +4,7 @@ import com.banancheg.translator.db.HistoryEntity
 import com.banancheg.translator.model.data.AppState
 import com.banancheg.translator.model.data.DataModel
 import com.banancheg.translator.model.data.Meanings
+import com.banancheg.translator.model.data.Translation
 
 private fun parseResult(dataModel: DataModel, newDataModels: ArrayList<DataModel>) {
     if (!dataModel.text.isNullOrBlank() && !dataModel.meanings.isNullOrEmpty()) {
@@ -30,9 +31,16 @@ fun mapHistoryEntityToSearchResult(list: List<HistoryEntity>): List<DataModel> {
     val dataModel= ArrayList<DataModel>()
     if (!list.isNullOrEmpty()) {
         for (entity in list) {
-            dataModel.add(DataModel(entity.word, null))
+            dataModel.add(DataModel(entity.word, listOf( Meanings(Translation(entity.translation), entity.imageUrl) )))
         }
     }
+    return dataModel
+}
+
+fun mapHistoryEntityToSearchResult(entity: HistoryEntity?): List<DataModel> {
+    val dataModel= ArrayList<DataModel>()
+    if (entity == null) return dataModel
+    dataModel.add(DataModel(entity.word, listOf( Meanings(Translation(entity.translation), entity.imageUrl) )))
     return dataModel
 }
 
@@ -43,7 +51,10 @@ fun convertDataModelSuccessToEntity(appState: AppState): HistoryEntity? {
             if (searchResult.isNullOrEmpty() || searchResult[0].text.isNullOrEmpty()) {
                 null
             } else {
-                HistoryEntity(searchResult[0].text!!, null)
+                HistoryEntity(searchResult[0].text!!, null,
+                    convertMeaningsToString(searchResult[0].meanings),
+                    searchResult[0].meanings?.get(0)?.imageUrl
+                )
             }
         }
         else -> null

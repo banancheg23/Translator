@@ -13,6 +13,13 @@ import com.banancheg.translator.utils.convertMeaningsToString
 import com.banancheg.translator.view.base.BaseActivity
 import com.banancheg.translator.view.descriptionscreen.DescriptionActivity
 import com.banancheg.translator.view.history.HistoryActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import java.lang.IllegalStateException
 
@@ -57,7 +64,29 @@ class MainActivity : BaseActivity<AppState>() {
                 startActivity(Intent(this, HistoryActivity::class.java))
                 true
             }
+            R.id.menu_find_saved_word -> {
+                showInputDialog("Input word")
+                true
+            }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onAccessDialogInput(text: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.getWordInfo(text, false)
+                .collect {
+                    if (it is AppState.Success && !it.data.isNullOrEmpty()) startActivity(
+                        DescriptionActivity.getIntent(
+                            this@MainActivity,
+                            it.data[0].text ?: "",
+                            it.data[0].meanings?.get(0)?.translation?.translation ?: "",
+                            it.data[0].meanings?.get(0)?.imageUrl
+                        )
+                    ) else {
+                        showAlertDialog(getString(R.string.error_stub), getString(R.string.find_word_error))
+                    }
+                }
         }
     }
 

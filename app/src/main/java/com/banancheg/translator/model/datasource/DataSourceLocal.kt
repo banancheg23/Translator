@@ -6,4 +6,5 @@ import io.reactivex.Observable
 
 interface DataSourceLocal<T> : DataSource<T> {
     suspend fun saveToDb(appState: AppState)
+    suspend fun getAllHistory(): T
 }

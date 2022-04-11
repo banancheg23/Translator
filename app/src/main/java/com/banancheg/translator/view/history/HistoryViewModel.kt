@@ -20,7 +20,7 @@ class HistoryViewModel(
 
     override fun getData(word: String, isOnline: Boolean) {
         job = viewModelCoroutineScope.launch {
-            _mutableLiveData.postValue(parseLocalSearchResults(interactor.getData(word, isOnline)))
+            _mutableLiveData.postValue(parseLocalSearchResults(interactor.getAllHistory()))
         }
     }
 

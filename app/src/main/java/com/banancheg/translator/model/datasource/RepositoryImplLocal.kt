@@ -11,4 +11,8 @@ class RepositoryImplLocal(private val dataSource: DataSourceLocal<List<DataModel
     override suspend fun saveToDb(appState: AppState) {
         dataSource.saveToDb(appState)
     }
+
+    override suspend fun getAllHistory(): List<DataModel> {
+        return dataSource.getAllHistory()
+    }
 }

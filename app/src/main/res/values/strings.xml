@@ -16,5 +16,7 @@ empty</string>
     </string>
     <string name="dialog_title_sorry">Sorry</string>
     <string name="menu_title_history">History</string>
+    <string name="menu_title_find">Word from history</string>
     <string name="image_stub">image</string>
+    <string name="find_word_error">Word not found</string>
 </resources>

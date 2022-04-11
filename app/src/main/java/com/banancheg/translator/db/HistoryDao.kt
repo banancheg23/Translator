@@ -10,7 +10,7 @@ interface HistoryDao {
     suspend fun getAllHistory(): List<HistoryEntity>
 
     @Query("SELECT * FROM HistoryEntity WHERE word=:word")
-    suspend fun getDataByWord(word: String): HistoryEntity
+    suspend fun getDataByWord(word: String): HistoryEntity?
 
     @Insert(onConflict = IGNORE)
     suspend fun insert(entity: HistoryEntity)

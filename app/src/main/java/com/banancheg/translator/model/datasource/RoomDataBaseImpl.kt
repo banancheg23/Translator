@@ -9,6 +9,10 @@ import io.reactivex.Observable
 
 class RoomDataBaseImpl(private val historyDao: HistoryDao) : DataSourceLocal<List<DataModel>> {
     override suspend fun getData(word: String): List<DataModel> {
+        return mapHistoryEntityToSearchResult(historyDao.getDataByWord(word))
+    }
+
+    override suspend fun getAllHistory(): List<DataModel> {
         return mapHistoryEntityToSearchResult(historyDao.getAllHistory())
     }
 

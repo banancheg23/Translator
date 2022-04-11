@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.banancheg.translator.R
 import com.banancheg.translator.databinding.LoadingLayoutBinding
 import com.banancheg.translator.model.data.AppState
+import com.banancheg.translator.utils.convertMeaningsToString
 import com.banancheg.translator.utils.network.isOnline
 import com.banancheg.translator.utils.ui.AlertDialogFragment
+import com.banancheg.translator.utils.ui.InputDialogFragment
+import com.banancheg.translator.view.descriptionscreen.DescriptionActivity
 import com.banancheg.translator.viewmodel.BaseViewModel
 
 abstract class BaseActivity<T : AppState> : AppCompatActivity(), View {
@@ -40,6 +43,21 @@ abstract class BaseActivity<T : AppState> : AppCompatActivity(), View {
 
     protected fun showAlertDialog(title: String?, message: String?) {
         AlertDialogFragment.newInstance(title, message).show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
+    }
+
+    protected fun showInputDialog(title: String?) {
+        InputDialogFragment.newInstance(this, title, ::onAccessDialogInput).show()
+    }
+
+    open fun onAccessDialogInput(text: String) {
+        startActivity(
+            DescriptionActivity.getIntent(
+                this,
+                text,
+                text,
+                null
+            )
+        )
     }
 
     private fun isDialogNull(): Boolean {
