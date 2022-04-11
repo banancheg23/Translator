@@ -5,19 +5,14 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
-import android.widget.Toast
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.banancheg.translator.R
 import com.banancheg.translator.databinding.ActivityMainBinding
 import com.banancheg.translator.model.data.AppState
 import com.banancheg.translator.model.data.DataModel
+import com.banancheg.translator.utils.convertMeaningsToString
 import com.banancheg.translator.view.base.BaseActivity
+import com.banancheg.translator.view.descriptionscreen.DescriptionActivity
 import com.banancheg.translator.view.history.HistoryActivity
-import com.banancheg.translator.view.history.HistoryViewModel
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import java.lang.IllegalStateException
 
@@ -29,13 +24,7 @@ class MainActivity : BaseActivity<AppState>() {
 
     override val viewModel by lazy { getViewModel<MainViewModel>() }
     private lateinit var binding: ActivityMainBinding
-    private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) }
-
-    private val onListItemClickListener = object : MainAdapter.OnListItemClickListener {
-        override fun onItemClick(data: DataModel) {
-            Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
-        }
-    }
+    private val adapter: MainAdapter by lazy { MainAdapter(::onItemClick) }
 
     private val fabClickListener = View.OnClickListener {
         val searchDialogFragment = SearchDialogFragment.newInstance()
@@ -89,5 +78,16 @@ class MainActivity : BaseActivity<AppState>() {
 
     override fun setDataToAdapter(data: List<DataModel>) {
         adapter.setData(data)
+    }
+
+    private fun onItemClick(data: DataModel) {
+        startActivity(
+            DescriptionActivity.getIntent(
+                this@MainActivity,
+                data.text!!,
+                convertMeaningsToString(data.meanings),
+                data.meanings?.get(0)?.imageUrl
+            )
+        )
     }
 }

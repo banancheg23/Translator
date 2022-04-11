@@ -16,4 +16,5 @@ empty</string>
     </string>
     <string name="dialog_title_sorry">Sorry</string>
     <string name="menu_title_history">History</string>
+    <string name="image_stub">image</string>
 </resources>

@@ -1,7 +1,7 @@
 package com.banancheg.translator.view.history
 
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.view.MenuItem
 import com.banancheg.translator.databinding.ActivityHistoryBinding
 import com.banancheg.translator.model.data.AppState
 import com.banancheg.translator.model.data.DataModel
@@ -20,6 +20,7 @@ class HistoryActivity : BaseActivity<AppState>() {
         binding = ActivityHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setActionbarHomeAsUp()
         initViewModel()
         initViews()
     }
@@ -27,6 +28,21 @@ class HistoryActivity : BaseActivity<AppState>() {
     override fun onResume() {
         super.onResume()
         viewModel.getData("", false)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun setActionbarHomeAsUp() {
+        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun initViews() {
