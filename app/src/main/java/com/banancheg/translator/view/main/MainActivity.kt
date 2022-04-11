@@ -75,6 +75,7 @@ class MainActivity : BaseActivity<AppState>() {
     override fun onAccessDialogInput(text: String) {
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.getWordInfo(text, false)
+                .flowOn(Dispatchers.IO)
                 .collect {
                     if (it is AppState.Success && !it.data.isNullOrEmpty()) startActivity(
                         DescriptionActivity.getIntent(
