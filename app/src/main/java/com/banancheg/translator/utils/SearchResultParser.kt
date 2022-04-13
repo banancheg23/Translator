@@ -51,7 +51,7 @@ fun convertDataModelSuccessToEntity(appState: AppState): HistoryEntity? {
             if (searchResult.isNullOrEmpty() || searchResult[0].text.isNullOrEmpty()) {
                 null
             } else {
-                HistoryEntity(searchResult[0].text!!, null,
+                HistoryEntity(searchResult[0].text.toString(), null,
                     convertMeaningsToString(searchResult[0].meanings),
                     searchResult[0].meanings?.get(0)?.imageUrl
                 )

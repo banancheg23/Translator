@@ -21,7 +21,7 @@ val application = module {
 
     single { get<TranslatorDataBase>().historyDao() }
     single<Repository<List<DataModel>>> { RepositoryImpl(RetrofitImpl()) }
-    single<RepositoryLocal<List<DataModel>>> { RepositoryImplLocal(RoomDataBaseImpl(get())) }
+    single<RepositoryLocal<List<DataModel>>> { RepositoryImplLocal(RoomDataBaseImpl(historyDao = get())) }
 }
 
 val mainScreen = module {
