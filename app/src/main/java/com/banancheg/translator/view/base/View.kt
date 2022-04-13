@@ -1,7 +1,9 @@
 package com.banancheg.translator.view.base
 
 import com.banancheg.translator.model.data.AppState
+import com.banancheg.translator.model.data.DataModel
 
 interface View {
-    abstract fun renderData(appState: AppState)
+    fun renderData(appState: AppState)
+    fun setDataToAdapter(data: List<DataModel>)
 }

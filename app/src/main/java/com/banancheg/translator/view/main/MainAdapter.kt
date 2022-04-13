@@ -7,8 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.banancheg.translator.R
 import com.banancheg.translator.model.data.DataModel
+import com.banancheg.translator.utils.convertMeaningsToString
 
-class MainAdapter(private var onListItemClickListener: OnListItemClickListener) :
+class MainAdapter(private var onListItemClick: (DataModel) -> Unit) :
     RecyclerView.Adapter<MainAdapter.RecyclerItemViewHolder>() {
 
     private var data: List<DataModel> = arrayListOf()
@@ -29,7 +30,7 @@ class MainAdapter(private var onListItemClickListener: OnListItemClickListener) 
     override fun getItemCount() = data.size
 
     private fun openInNewWindow(listItemData: DataModel) {
-        onListItemClickListener.onItemClick(listItemData)
+        onListItemClick(listItemData)
     }
 
     inner class RecyclerItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -37,14 +38,10 @@ class MainAdapter(private var onListItemClickListener: OnListItemClickListener) 
         fun bind(data: DataModel) {
             if (layoutPosition != RecyclerView.NO_POSITION) {
                 itemView.findViewById<TextView>(R.id.header_textview_recycle_item).text = data.text
-                itemView.findViewById<TextView>(R.id.description_textview_recycle_item).text = data.meanings?.get(0)?.translation?.translation
+                itemView.findViewById<TextView>(R.id.description_textview_recycle_item).text =  convertMeaningsToString(data.meanings)
                 itemView.setOnClickListener { openInNewWindow(data) }
 
             }
         }
-    }
-
-    interface OnListItemClickListener {
-        fun onItemClick(data: DataModel)
     }
 }

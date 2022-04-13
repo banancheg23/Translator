@@ -5,6 +5,7 @@ import com.banancheg.translator.model.data.AppState
 import com.banancheg.translator.viewmodel.BaseViewModel
 import io.reactivex.observers.DisposableObserver
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -22,6 +23,10 @@ class MainViewModel (private val interactor: MainInteractor) : BaseViewModel<App
         job = viewModelCoroutineScope.launch {
             startInteractor(word, isOnline)
         }
+    }
+
+    suspend fun getWordInfo(word: String, isOnline: Boolean) = flow {
+        emit(interactor.getData(word, isOnline))
     }
 
     private suspend fun startInteractor(word: String, isOnline: Boolean) = withContext(Dispatchers.IO) {

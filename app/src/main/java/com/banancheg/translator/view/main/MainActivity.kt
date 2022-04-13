@@ -1,18 +1,25 @@
 package com.banancheg.translator.view.main
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
-import android.widget.Toast
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.banancheg.translator.R
 import com.banancheg.translator.databinding.ActivityMainBinding
 import com.banancheg.translator.model.data.AppState
 import com.banancheg.translator.model.data.DataModel
+import com.banancheg.translator.utils.convertMeaningsToString
 import com.banancheg.translator.view.base.BaseActivity
+import com.banancheg.translator.view.descriptionscreen.DescriptionActivity
+import com.banancheg.translator.view.history.HistoryActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import java.lang.IllegalStateException
 
@@ -22,15 +29,9 @@ class MainActivity : BaseActivity<AppState>() {
         private val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "42"
     }
 
-    override lateinit var viewModel: MainViewModel
+    override val viewModel by lazy { getViewModel<MainViewModel>() }
     private lateinit var binding: ActivityMainBinding
-    private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) }
-
-    private val onListItemClickListener = object : MainAdapter.OnListItemClickListener {
-        override fun onItemClick(data: DataModel) {
-            Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
-        }
-    }
+    private val adapter: MainAdapter by lazy { MainAdapter(::onItemClick) }
 
     private val fabClickListener = View.OnClickListener {
         val searchDialogFragment = SearchDialogFragment.newInstance()
@@ -52,12 +53,49 @@ class MainActivity : BaseActivity<AppState>() {
         initViews()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.history_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_history -> {
+                startActivity(Intent(this, HistoryActivity::class.java))
+                true
+            }
+            R.id.menu_find_saved_word -> {
+                showInputDialog("Input word")
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onAccessDialogInput(text: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.getWordInfo(text, false)
+                .flowOn(Dispatchers.IO)
+                .collect {
+                    if (it is AppState.Success && !it.data.isNullOrEmpty()) startActivity(
+                        DescriptionActivity.getIntent(
+                            this@MainActivity,
+                            it.data[0].text ?: "",
+                            it.data[0].meanings?.get(0)?.translation?.translation ?: "",
+                            it.data[0].meanings?.get(0)?.imageUrl
+                        )
+                    ) else {
+                        showAlertDialog(getString(R.string.error_stub), getString(R.string.find_word_error))
+                    }
+                }
+        }
+    }
+
     private fun initViewModel() {
         if (binding.mainActivityRecyclerview.adapter != null) {
             throw IllegalStateException("ViewModel must be initialised first")
         }
 
-        viewModel = getViewModel<MainViewModel>()
         viewModel.subscribe().observe(this) {
             renderData(it)
         }
@@ -65,64 +103,21 @@ class MainActivity : BaseActivity<AppState>() {
 
     private fun initViews() {
         binding.searchFab.setOnClickListener(fabClickListener)
-        binding.mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
         binding.mainActivityRecyclerview.adapter = adapter
     }
 
-    override fun renderData(appState: AppState) {
-        when (appState) {
-            is AppState.Success -> {
-                val dataModel = appState.data
-                if (dataModel == null || dataModel.isEmpty()) {
-                    showErrorScreen(getString(R.string.empty_server_response_on_success))
-                    return
-                }
-
-                showViewSuccess()
-                adapter?.setData(dataModel)
-            }
-
-            is AppState.Loading -> {
-                showViewLoading()
-                if (appState.progress != null) {
-                    binding.progressBarHorizontal.visibility = VISIBLE
-                    binding.progressBarRound.visibility = GONE
-                    binding.progressBarHorizontal.progress = appState.progress
-                } else {
-                    binding.progressBarHorizontal.visibility = GONE
-                    binding.progressBarRound.visibility = VISIBLE
-                }
-            }
-
-            is AppState.Error -> {
-                showErrorScreen(appState.error.message)
-            }
-        }
+    override fun setDataToAdapter(data: List<DataModel>) {
+        adapter.setData(data)
     }
 
-    private fun showErrorScreen(error: String?) {
-        showViewError()
-        binding.errorTextview.text = error ?: getString(R.string.undefined_error)
-        binding.reloadButton.setOnClickListener {
-            viewModel.getData("hi", true)
-        }
-    }
-
-    private fun showViewSuccess() {
-        binding.successLinearLayout.visibility = VISIBLE
-        binding.loadingFrameLayout.visibility = GONE
-        binding.errorLinearLayout.visibility = GONE
-    }
-
-    private fun showViewLoading() {
-        binding.successLinearLayout.visibility = GONE
-        binding.loadingFrameLayout.visibility = VISIBLE
-        binding.errorLinearLayout.visibility = GONE
-    }
-
-    private fun showViewError() {
-        binding.successLinearLayout.visibility = GONE
-        binding.loadingFrameLayout.visibility = GONE
-        binding.errorLinearLayout.visibility = VISIBLE
+    private fun onItemClick(data: DataModel) {
+        startActivity(
+            DescriptionActivity.getIntent(
+                this@MainActivity,
+                data.text!!,
+                convertMeaningsToString(data.meanings),
+                data.meanings?.get(0)?.imageUrl
+            )
+        )
     }
 }

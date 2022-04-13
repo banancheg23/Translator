@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:tools = "http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/history_recycler_item"
+    android:orientation="vertical"
+    android:layout_marginTop="@dimen/margin_medium">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/header_history_textview_recycle_item"
+        style="@style/HeaderTextStyle"
+        tools:text="Header"
+        android:layout_marginStart="@dimen/margin_medium" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hairline"
+        android:background="@color/color_gray"
+        android:layout_marginTop="@dimen/margin_small"/>
+</LinearLayout>
