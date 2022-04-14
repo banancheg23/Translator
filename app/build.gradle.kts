@@ -20,14 +20,18 @@ android {
         }
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
 dependencies {
+    implementation(project(Modules.model))
+    implementation(project(Modules.utils))
+    implementation(project(Modules.core))
+    implementation(project(Modules.historyScreen))
+    implementation(project(Modules.repository))
+
 //Kotlin
     implementation(Kotlin.core)
 

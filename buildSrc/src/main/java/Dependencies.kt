@@ -69,8 +69,8 @@ object Design {
 
 object Kotlin {
     const val core = "androidx.core:core-ktx:${Versions.core}"
-    const val coroutines_core = "androidx.core:core-ktx:${Versions.coroutinesCore}"
-    const val coroutines_android = "androidx.core:core-ktx:${Versions.coroutinesAndroid}"
+    const val coroutines_core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutinesCore}"
+    const val coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutinesAndroid}"
 }
 
 object Retrofit {
