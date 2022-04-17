@@ -9,8 +9,8 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.banancheg.translator.R
 import com.banancheg.translator.databinding.ActivityDescriptionBinding
-import com.banancheg.translator.utils.network.isOnline
-import com.banancheg.translator.utils.ui.AlertDialogFragment
+import com.banancheg.utils.network.isOnline
+import com.banancheg.utils.ui.AlertDialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException

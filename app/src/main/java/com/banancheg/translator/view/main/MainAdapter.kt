@@ -5,9 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.banancheg.model.data.DataModel
 import com.banancheg.translator.R
-import com.banancheg.translator.model.data.DataModel
-import com.banancheg.translator.utils.convertMeaningsToString
+import com.banancheg.utils.convertMeaningsToString
 
 class MainAdapter(private var onListItemClick: (DataModel) -> Unit) :
     RecyclerView.Adapter<MainAdapter.RecyclerItemViewHolder>() {

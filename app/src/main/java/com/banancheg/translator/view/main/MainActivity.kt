@@ -5,20 +5,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.banancheg.core.base.BaseActivity
+import com.banancheg.historyscreen.history.HistoryActivity
+import com.banancheg.model.data.AppState
+import com.banancheg.model.data.DataModel
 import com.banancheg.translator.R
 import com.banancheg.translator.databinding.ActivityMainBinding
-import com.banancheg.translator.model.data.AppState
-import com.banancheg.translator.model.data.DataModel
-import com.banancheg.translator.utils.convertMeaningsToString
-import com.banancheg.translator.view.base.BaseActivity
 import com.banancheg.translator.view.descriptionscreen.DescriptionActivity
-import com.banancheg.translator.view.history.HistoryActivity
+import com.banancheg.utils.convertMeaningsToString
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import java.lang.IllegalStateException
@@ -76,16 +73,22 @@ class MainActivity : BaseActivity<AppState>() {
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.getWordInfo(text, false)
                 .flowOn(Dispatchers.IO)
-                .collect {
-                    if (it is AppState.Success && !it.data.isNullOrEmpty()) startActivity(
-                        DescriptionActivity.getIntent(
-                            this@MainActivity,
-                            it.data[0].text ?: "",
-                            it.data[0].meanings?.get(0)?.translation?.translation ?: "",
-                            it.data[0].meanings?.get(0)?.imageUrl
-                        )
-                    ) else {
-                        showAlertDialog(getString(R.string.error_stub), getString(R.string.find_word_error))
+                .collect() {
+                    when (it) {
+                        is AppState.Success -> {
+                            val appStateData = it.data
+                            if (!appStateData.isNullOrEmpty())
+                                startActivity(
+                                    DescriptionActivity.getIntent(
+                                        this@MainActivity,
+                                        appStateData[0].text ?: "",
+                                        appStateData[0].meanings?.get(0)?.translation?.translation ?: "",
+                                        appStateData[0].meanings?.get(0)?.imageUrl
+                                    )
+                                )
+                        }
+
+                        else -> showAlertDialog(getString(R.string.error_stub), getString(R.string.find_word_error))
                     }
                 }
         }
@@ -114,7 +117,7 @@ class MainActivity : BaseActivity<AppState>() {
         startActivity(
             DescriptionActivity.getIntent(
                 this@MainActivity,
-                data.text!!,
+                data.text ?: "",
                 convertMeaningsToString(data.meanings),
                 data.meanings?.get(0)?.imageUrl
             )

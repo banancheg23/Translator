@@ -1,9 +1,8 @@
 package com.banancheg.translator.view.main
 
 import androidx.lifecycle.LiveData
-import com.banancheg.translator.model.data.AppState
-import com.banancheg.translator.viewmodel.BaseViewModel
-import io.reactivex.observers.DisposableObserver
+import com.banancheg.core.viewmodel.BaseViewModel
+import com.banancheg.model.data.AppState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch

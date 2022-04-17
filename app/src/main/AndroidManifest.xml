@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".view.history.HistoryActivity" />
+        <activity android:name="com.banancheg.historyscreen.history.HistoryActivity" />
 
         <activity android:name=".view.descriptionscreen.DescriptionActivity" />
     </application>
