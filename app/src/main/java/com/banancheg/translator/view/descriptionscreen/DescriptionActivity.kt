@@ -9,7 +9,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.banancheg.translator.R
 import com.banancheg.translator.databinding.ActivityDescriptionBinding
-import com.banancheg.utils.network.isOnline
+import com.banancheg.utils.network.OnlineLiveData
 import com.banancheg.utils.ui.AlertDialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -48,14 +48,16 @@ class DescriptionActivity : AppCompatActivity() {
     }
 
     private fun startLoadingOrShowError() {
-        if (isOnline(applicationContext)) {
-            setData()
-        } else {
-            AlertDialogFragment.newInstance(
-                getString(R.string.dialog_title_device_is_offline),
-                getString(R.string.dialog_message_device_is_offline)
-            ).show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
-            hideLoaderIfNeeded()
+        OnlineLiveData(this).observe(this) { online ->
+            if (online) {
+                setData()
+            } else {
+                AlertDialogFragment.newInstance(
+                    getString(R.string.dialog_title_device_is_offline),
+                    getString(R.string.dialog_message_device_is_offline)
+                ).show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
+                hideLoaderIfNeeded()
+            }
         }
     }
 
