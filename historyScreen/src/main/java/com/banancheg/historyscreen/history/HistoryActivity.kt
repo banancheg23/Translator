@@ -6,13 +6,18 @@ import com.banancheg.core.base.BaseActivity
 import com.banancheg.historyscreen.databinding.ActivityHistoryBinding
 import com.banancheg.model.data.AppState
 import com.banancheg.model.data.DataModel
-import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.activityScope
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.scope.Scope
 import java.lang.IllegalStateException
 
-class HistoryActivity : BaseActivity<AppState>() {
+class HistoryActivity : BaseActivity<AppState>(), AndroidScopeComponent {
 
     private lateinit var binding: ActivityHistoryBinding
-    override val viewModel by lazy { getViewModel<HistoryViewModel>() }
+
+    override val scope: Scope by activityScope()
+    override val viewModel: HistoryViewModel by viewModel()
     private val adapter: HistoryAdapter by lazy { HistoryAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {

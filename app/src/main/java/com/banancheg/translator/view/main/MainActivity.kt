@@ -17,16 +17,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.activityScope
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.scope.Scope
 import java.lang.IllegalStateException
 
-class MainActivity : BaseActivity<AppState>() {
+class MainActivity : BaseActivity<AppState>(), AndroidScopeComponent {
 
     companion object {
         private val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "42"
     }
 
-    override val viewModel by lazy { getViewModel<MainViewModel>() }
+    override val scope: Scope by activityScope()
+    override val viewModel: MainViewModel by viewModel()
+
     private lateinit var binding: ActivityMainBinding
     private val adapter: MainAdapter by lazy { MainAdapter(::onItemClick) }
 

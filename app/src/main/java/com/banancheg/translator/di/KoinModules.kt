@@ -1,14 +1,17 @@
 package com.banancheg.translator.di
 
 import androidx.room.Room
+import com.banancheg.historyscreen.history.HistoryActivity
 import com.banancheg.historyscreen.history.HistoryInteractor
 import com.banancheg.historyscreen.history.HistoryViewModel
 import com.banancheg.model.data.DataModel
 import com.banancheg.repository.*
 import com.banancheg.repository.db.MIGRATION_1_2
 import com.banancheg.repository.db.TranslatorDataBase
+import com.banancheg.translator.view.main.MainActivity
 import com.banancheg.translator.view.main.MainInteractor
 import com.banancheg.translator.view.main.MainViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val application = module {
@@ -22,11 +25,15 @@ val application = module {
 }
 
 val mainScreen = module {
-    factory { MainInteractor(repositoryRemote = get(), repositoryLocal = get()) }
-    factory { MainViewModel(interactor = get()) }
+    scope<MainActivity> {
+        scoped { MainInteractor(repositoryRemote = get(), repositoryLocal = get()) }
+        viewModel { MainViewModel(interactor = get()) }
+    }
 }
 
 val historyScreen = module {
-    factory { HistoryInteractor(repositoryRemote = get(), repositoryLocal = get()) }
-    factory { HistoryViewModel(interactor = get()) }
+    scope<HistoryActivity> {
+        scoped { HistoryInteractor(repositoryRemote = get(), repositoryLocal = get()) }
+        viewModel { HistoryViewModel(interactor = get()) }
+    }
 }
