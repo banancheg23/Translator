@@ -3,6 +3,7 @@ package com.banancheg.translator.view.main
 import androidx.lifecycle.LiveData
 import com.banancheg.core.viewmodel.BaseViewModel
 import com.banancheg.model.data.AppState
+import com.banancheg.utils.parseOnlineSearchResults
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -29,7 +30,7 @@ class MainViewModel (private val interactor: MainInteractor) : BaseViewModel<App
     }
 
     private suspend fun startInteractor(word: String, isOnline: Boolean) = withContext(Dispatchers.IO) {
-        _mutableLiveData.postValue(interactor.getData(word, isOnline))
+        _mutableLiveData.postValue(parseOnlineSearchResults(interactor.getData(word, isOnline)))
     }
 
     override fun handleError(error: Throwable) {

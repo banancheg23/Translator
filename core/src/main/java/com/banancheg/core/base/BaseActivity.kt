@@ -15,7 +15,7 @@ abstract class BaseActivity<T : AppState> : AppCompatActivity(), View {
 
     private lateinit var binding: LoadingLayoutBinding
     abstract val viewModel: BaseViewModel<T>
-    protected var isNetworkAvailable: Boolean = false
+    private var isNetworkAvailable: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

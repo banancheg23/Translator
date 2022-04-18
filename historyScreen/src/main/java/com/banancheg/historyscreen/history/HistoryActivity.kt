@@ -5,7 +5,7 @@ import android.view.MenuItem
 import com.banancheg.core.base.BaseActivity
 import com.banancheg.historyscreen.databinding.ActivityHistoryBinding
 import com.banancheg.model.data.AppState
-import com.banancheg.model.data.DataModel
+import com.banancheg.model.data.userdata.DataModel
 import org.koin.android.scope.AndroidScopeComponent
 import org.koin.androidx.scope.activityScope
 import org.koin.androidx.viewmodel.ext.android.viewModel

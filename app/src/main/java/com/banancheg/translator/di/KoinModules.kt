@@ -4,7 +4,7 @@ import androidx.room.Room
 import com.banancheg.historyscreen.history.HistoryActivity
 import com.banancheg.historyscreen.history.HistoryInteractor
 import com.banancheg.historyscreen.history.HistoryViewModel
-import com.banancheg.model.data.DataModel
+import com.banancheg.model.data.SearchResultDto
 import com.banancheg.repository.*
 import com.banancheg.repository.db.MIGRATION_1_2
 import com.banancheg.repository.db.TranslatorDataBase
@@ -20,8 +20,8 @@ val application = module {
         .build() }
 
     single { get<TranslatorDataBase>().historyDao() }
-    single<Repository<List<DataModel>>> { RepositoryImpl(RetrofitImpl()) }
-    single<RepositoryLocal<List<DataModel>>> { RepositoryImplLocal(RoomDataBaseImpl(historyDao = get())) }
+    single<Repository<List<SearchResultDto>>> { RepositoryImpl(RetrofitImpl()) }
+    single<RepositoryLocal<List<SearchResultDto>>> { RepositoryImplLocal(RoomDataBaseImpl(historyDao = get())) }
 }
 
 val mainScreen = module {

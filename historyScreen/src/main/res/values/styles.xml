@@ -4,7 +4,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
 
     <style name="BaseTextStyle" parent="TextAppearance.MaterialComponents.Body1">
@@ -29,19 +28,5 @@
         <item name="android:textSize">@dimen/text_size_large</item>
 
         <item name="android:inputType">text</item>
-    </style>
-
-    <style name="BaseFloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
-        <item name="android:backgroundTint">@color/colorAccent</item>
-        <item name="tint">@color/white</item>
-        <item name="borderWidth">@null</item>
-    </style>
-
-    <style name="AppBottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/AppModalStyle</item>
-    </style>
-
-    <style name="AppModalStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">
-        <item name="android:background">@drawable/bottom_sheet_dialog_background</item>
     </style>
 </resources>

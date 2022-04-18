@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banancheg.core.base.BaseActivity
 import com.banancheg.historyscreen.history.HistoryActivity
 import com.banancheg.model.data.AppState
-import com.banancheg.model.data.DataModel
+import com.banancheg.model.data.userdata.DataModel
 import com.banancheg.translator.R
 import com.banancheg.translator.databinding.ActivityMainBinding
 import com.banancheg.translator.view.descriptionscreen.DescriptionActivity
@@ -24,12 +24,11 @@ import org.koin.android.scope.AndroidScopeComponent
 import org.koin.androidx.scope.activityScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.scope.Scope
-import java.lang.IllegalStateException
 
 class MainActivity : BaseActivity<AppState>(), AndroidScopeComponent {
 
     companion object {
-        private val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "42"
+        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "42"
     }
 
     override val scope: Scope by activityScope()
@@ -84,7 +83,7 @@ class MainActivity : BaseActivity<AppState>(), AndroidScopeComponent {
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.getWordInfo(text, false)
                 .flowOn(Dispatchers.IO)
-                .collect() {
+                .collect {
                     when (it) {
                         is AppState.Success -> {
                             val appStateData = it.data
@@ -92,9 +91,9 @@ class MainActivity : BaseActivity<AppState>(), AndroidScopeComponent {
                                 startActivity(
                                     DescriptionActivity.getIntent(
                                         this@MainActivity,
-                                        appStateData[0].text ?: "",
-                                        appStateData[0].meanings?.get(0)?.translation?.translation ?: "",
-                                        appStateData[0].meanings?.get(0)?.imageUrl
+                                        appStateData[0].text,
+                                        appStateData[0].meanings[0].translatedMeaning.translatedMeaning,
+                                        appStateData[0].meanings[0].imageUrl
                                     )
                                 )
                         }
@@ -128,9 +127,9 @@ class MainActivity : BaseActivity<AppState>(), AndroidScopeComponent {
         startActivity(
             DescriptionActivity.getIntent(
                 this@MainActivity,
-                data.text ?: "",
+                data.text,
                 convertMeaningsToString(data.meanings),
-                data.meanings?.get(0)?.imageUrl
+                data.meanings[0].imageUrl
             )
         )
     }

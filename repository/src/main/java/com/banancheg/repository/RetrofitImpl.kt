@@ -1,6 +1,6 @@
 package com.banancheg.repository
 
-import com.banancheg.model.data.DataModel
+import com.banancheg.model.data.SearchResultDto
 import com.banancheg.repository.api.ApiService
 import com.banancheg.repository.api.BaseInterceptor
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -10,7 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitImpl : DataSource<List<DataModel>> {
+class RetrofitImpl : DataSource<List<SearchResultDto>> {
 
     companion object {
         private const val BASE_URL_LOCATIONS = "https://dictionary.skyeng.ru/api/public/v1/"

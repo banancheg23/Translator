@@ -1,26 +1,26 @@
 package com.banancheg.repository
 
 import com.banancheg.model.data.AppState
-import com.banancheg.model.data.DataModel
-import com.banancheg.model.data.Meanings
-import com.banancheg.model.data.Translation
+import com.banancheg.model.data.SearchResultDto
+import com.banancheg.model.data.MeaningsDto
+import com.banancheg.model.data.TranslationDto
 import com.banancheg.repository.db.HistoryEntity
 import com.banancheg.utils.convertMeaningsToString
 
-fun mapHistoryEntityToSearchResult(list: List<HistoryEntity>): List<DataModel> {
-    val dataModel= ArrayList<DataModel>()
+fun mapHistoryEntityToSearchResult(list: List<HistoryEntity>): List<SearchResultDto> {
+    val dataModel= ArrayList<SearchResultDto>()
     if (!list.isNullOrEmpty()) {
         for (entity in list) {
-            dataModel.add(DataModel(entity.word, listOf( Meanings(Translation(entity.translation), entity.imageUrl) )))
+            dataModel.add(SearchResultDto(entity.word, listOf( MeaningsDto(TranslationDto(entity.translation), entity.imageUrl) )))
         }
     }
     return dataModel
 }
 
-fun mapHistoryEntityToSearchResult(entity: HistoryEntity?): List<DataModel> {
-    val dataModel= ArrayList<DataModel>()
+fun mapHistoryEntityToSearchResult(entity: HistoryEntity?): List<SearchResultDto> {
+    val dataModel= ArrayList<SearchResultDto>()
     if (entity == null) return dataModel
-    dataModel.add(DataModel(entity.word, listOf( Meanings(Translation(entity.translation), entity.imageUrl) )))
+    dataModel.add(SearchResultDto(entity.word, listOf( MeaningsDto(TranslationDto(entity.translation), entity.imageUrl) )))
     return dataModel
 }
 
@@ -28,12 +28,13 @@ fun convertDataModelSuccessToEntity(appState: AppState): HistoryEntity? {
     return when (appState) {
         is AppState.Success -> {
             val searchResult = appState.data
-            if (searchResult.isNullOrEmpty() || searchResult[0].text.isNullOrEmpty()) {
+            if (searchResult.isNullOrEmpty() || searchResult[0].text.isEmpty()) {
                 null
             } else {
-                HistoryEntity(searchResult[0].text.toString(), null,
+                HistoryEntity(
+                    searchResult[0].text, null,
                     convertMeaningsToString(searchResult[0].meanings),
-                    searchResult[0].meanings?.get(0)?.imageUrl
+                    searchResult[0].meanings[0].imageUrl
                 )
             }
         }
