@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.banancheg.model.data.DataModel
+import com.banancheg.model.data.userdata.DataModel
 import com.banancheg.translator.R
 import com.banancheg.utils.convertMeaningsToString
 

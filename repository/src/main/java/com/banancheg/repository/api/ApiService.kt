@@ -1,6 +1,6 @@
 package com.banancheg.repository.api
 
-import com.banancheg.model.data.DataModel
+import com.banancheg.model.data.SearchResultDto
 import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -14,5 +14,5 @@ interface ApiService {
     }
 
     @GET(REQUEST_SEARCH)
-    fun searchAsync(@Query(QUERY_SEARCH) word: String): Deferred<List<DataModel>>
+    fun searchAsync(@Query(QUERY_SEARCH) word: String): Deferred<List<SearchResultDto>>
 }

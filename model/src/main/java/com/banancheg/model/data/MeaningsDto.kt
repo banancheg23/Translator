@@ -2,8 +2,8 @@ package com.banancheg.model.data
 
 import com.google.gson.annotations.SerializedName
 
-class Meanings(
-    @SerializedName(FIELD_TRANSLATION) val translation: Translation?,
+class MeaningsDto(
+    @SerializedName(FIELD_TRANSLATION) val translationDto: TranslationDto?,
     @SerializedName(FIELD_IMAGE_URL) val imageUrl: String?
 ) {
     companion object {

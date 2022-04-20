@@ -5,28 +5,38 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.banancheg.core.base.BaseActivity
 import com.banancheg.historyscreen.history.HistoryActivity
 import com.banancheg.model.data.AppState
-import com.banancheg.model.data.DataModel
+import com.banancheg.model.data.userdata.DataModel
 import com.banancheg.translator.R
 import com.banancheg.translator.databinding.ActivityMainBinding
 import com.banancheg.translator.view.descriptionscreen.DescriptionActivity
 import com.banancheg.utils.convertMeaningsToString
+import com.banancheg.utils.ui.viewById
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.getViewModel
-import java.lang.IllegalStateException
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.activityScope
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.scope.Scope
 
-class MainActivity : BaseActivity<AppState>() {
+class MainActivity : BaseActivity<AppState>(), AndroidScopeComponent {
 
     companion object {
-        private val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "42"
+        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "42"
     }
 
-    override val viewModel by lazy { getViewModel<MainViewModel>() }
+    override val scope: Scope by activityScope()
+    override val viewModel: MainViewModel by viewModel()
+
+    private val mainActivityRecyclerview by viewById<RecyclerView>(R.id.main_activity_recyclerview)
+    private val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
+
     private lateinit var binding: ActivityMainBinding
     private val adapter: MainAdapter by lazy { MainAdapter(::onItemClick) }
 
@@ -73,7 +83,7 @@ class MainActivity : BaseActivity<AppState>() {
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.getWordInfo(text, false)
                 .flowOn(Dispatchers.IO)
-                .collect() {
+                .collect {
                     when (it) {
                         is AppState.Success -> {
                             val appStateData = it.data
@@ -81,9 +91,9 @@ class MainActivity : BaseActivity<AppState>() {
                                 startActivity(
                                     DescriptionActivity.getIntent(
                                         this@MainActivity,
-                                        appStateData[0].text ?: "",
-                                        appStateData[0].meanings?.get(0)?.translation?.translation ?: "",
-                                        appStateData[0].meanings?.get(0)?.imageUrl
+                                        appStateData[0].text,
+                                        appStateData[0].meanings[0].translatedMeaning.translatedMeaning,
+                                        appStateData[0].meanings[0].imageUrl
                                     )
                                 )
                         }
@@ -95,7 +105,7 @@ class MainActivity : BaseActivity<AppState>() {
     }
 
     private fun initViewModel() {
-        if (binding.mainActivityRecyclerview.adapter != null) {
+        if (mainActivityRecyclerview.adapter != null) {
             throw IllegalStateException("ViewModel must be initialised first")
         }
 
@@ -105,8 +115,8 @@ class MainActivity : BaseActivity<AppState>() {
     }
 
     private fun initViews() {
-        binding.searchFab.setOnClickListener(fabClickListener)
-        binding.mainActivityRecyclerview.adapter = adapter
+        searchFAB.setOnClickListener(fabClickListener)
+        mainActivityRecyclerview.adapter = adapter
     }
 
     override fun setDataToAdapter(data: List<DataModel>) {
@@ -117,9 +127,9 @@ class MainActivity : BaseActivity<AppState>() {
         startActivity(
             DescriptionActivity.getIntent(
                 this@MainActivity,
-                data.text ?: "",
+                data.text,
                 convertMeaningsToString(data.meanings),
-                data.meanings?.get(0)?.imageUrl
+                data.meanings[0].imageUrl
             )
         )
     }

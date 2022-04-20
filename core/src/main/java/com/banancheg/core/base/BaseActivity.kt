@@ -1,13 +1,13 @@
 package com.banancheg.core.base
 
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.banancheg.core.R
 import com.banancheg.core.databinding.LoadingLayoutBinding
 import com.banancheg.core.viewmodel.BaseViewModel
 import com.banancheg.model.data.AppState
-import com.banancheg.utils.network.isOnline
+import com.banancheg.utils.network.OnlineLiveData
 import com.banancheg.utils.ui.AlertDialogFragment
 import com.banancheg.utils.ui.InputDialogFragment
 
@@ -15,24 +15,36 @@ abstract class BaseActivity<T : AppState> : AppCompatActivity(), View {
 
     private lateinit var binding: LoadingLayoutBinding
     abstract val viewModel: BaseViewModel<T>
-    protected var isNetworkAvailable: Boolean = false
+    private var isNetworkAvailable: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        isNetworkAvailable = isOnline(applicationContext)
         binding = LoadingLayoutBinding.inflate(layoutInflater)
+        subscribeToNetworkChange()
+    }
+
+    private fun subscribeToNetworkChange() {
+        OnlineLiveData(this).observe(this) { isOnline ->
+            isNetworkAvailable = isOnline
+            if (!isNetworkAvailable) {
+                Toast.makeText(
+                    this,
+                    R.string.dialog_message_device_is_offline,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
 
-        isNetworkAvailable = isOnline(applicationContext)
         if (!isNetworkAvailable && isDialogNull()) {
             showNoInternetConnectionDialog()
         }
     }
 
-    protected fun showNoInternetConnectionDialog() {
+    private fun showNoInternetConnectionDialog() {
         showAlertDialog(
             getString(R.string.dialog_title_device_is_offline),
             getString(R.string.dialog_message_device_is_offline)
