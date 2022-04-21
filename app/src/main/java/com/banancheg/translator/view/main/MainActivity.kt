@@ -1,10 +1,14 @@
 package com.banancheg.translator.view.main
 
+import android.animation.ObjectAnimator
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.os.CountDownTimer
+import android.view.*
+import android.view.animation.AnticipateInterpolator
+import androidx.annotation.RequiresApi
+import androidx.core.animation.doOnEnd
 import androidx.recyclerview.widget.RecyclerView
 import com.banancheg.core.base.BaseActivity
 import com.banancheg.historyscreen.history.HistoryActivity
@@ -58,6 +62,49 @@ class MainActivity : BaseActivity<AppState>(), AndroidScopeComponent {
         setContentView(binding.root)
         initViewModel()
         initViews()
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            setSplashAnimation()
+//        }
+        setSplashScreenDuration()
+    }
+
+    private fun setSplashScreenDuration() {
+        var isHideSplashScreen = false
+        object : CountDownTimer(2000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                isHideSplashScreen = true
+            }
+        }.start()
+        val content: View = findViewById(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    return if (isHideSplashScreen) {
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    } else {
+                        false
+                    }
+                }
+            }
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun setSplashAnimation() {
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+            val slideLeft = ObjectAnimator.ofFloat(
+                splashScreenView,
+                View.TRANSLATION_X,
+                1300f
+            )
+            slideLeft.interpolator = AnticipateInterpolator()
+            slideLeft.duration = 1000L
+            slideLeft.doOnEnd { splashScreenView.remove() }
+            slideLeft.start()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
