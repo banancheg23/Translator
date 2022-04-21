@@ -2,7 +2,10 @@ package com.banancheg.translator.view.descriptionscreen
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
@@ -103,6 +106,11 @@ class DescriptionActivity : AppCompatActivity() {
                     isFirstResource: Boolean
                 ): Boolean {
                     hideLoaderIfNeeded()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        val blurEffect = RenderEffect.createBlurEffect(50f, 50f, Shader.TileMode.MIRROR)
+                        imageView.setRenderEffect(blurEffect)
+                        imageView.setOnClickListener { imageView -> imageView.setRenderEffect(null) }
+                    }
                     return false
                 }
             })
